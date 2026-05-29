@@ -33,10 +33,10 @@ def seed_default_admin():
     finally:
         db.close()
 
-# 允许跨域
+# 允许跨域（局域网内均可访问）
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:8080"],  # Vue 开发服务器地址
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

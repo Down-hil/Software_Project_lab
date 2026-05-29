@@ -1,7 +1,13 @@
 import axios from "axios";
 
+// 动态获取后端地址：与前端同主机的 8000 端口
+const getBaseURL = () => {
+  const host = window.location.hostname;
+  return `http://${host}:8000/api`;
+};
+
 const api = axios.create({
-  baseURL: "http://localhost:8000/api", // 后端地址
+  baseURL: getBaseURL(),
   timeout: 10000,
 });
 
