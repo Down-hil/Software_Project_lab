@@ -75,6 +75,28 @@
           </el-form-item>
         </el-col>
       </el-row>
+
+      <el-divider content-position="left">账号信息</el-divider>
+      <el-row :gutter="16">
+        <el-col :span="12">
+          <el-form-item label="登录密码">
+            <el-input
+              v-model="formData.password"
+              type="password"
+              show-password
+              placeholder="默认 123456"
+            />
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="角色">
+            <el-select v-model="formData.role">
+              <el-option label="员工" value="employee" />
+              <el-option label="管理员" value="admin" />
+            </el-select>
+          </el-form-item>
+        </el-col>
+      </el-row>
     </el-form>
     <template #footer>
       <el-button @click="dialogVisible = false">取消</el-button>
@@ -86,7 +108,6 @@
 <script setup>
 import { computed, reactive } from "vue";
 import { ElMessage } from "element-plus";
-import { generateDefaultWage } from "@/utils/helpers";
 
 const props = defineProps({
   modelValue: Boolean,
@@ -109,6 +130,8 @@ const formData = reactive({
   major: "",
   maritalStatus: "未婚",
   jobTitle: "",
+  password: "123456",
+  role: "employee",
 });
 
 const resetForm = () => {
@@ -123,6 +146,8 @@ const resetForm = () => {
     major: "",
     maritalStatus: "未婚",
     jobTitle: "",
+    password: "123456",
+    role: "employee",
   });
 };
 
@@ -131,15 +156,11 @@ const confirmAdd = () => {
     ElMessage.warning("请输入员工姓名");
     return;
   }
-  const newId = Date.now();
+  //const newId = Date.now(); // 这里不再生成 ID，由后端返回
   const newEmployee = {
-    id: newId,
+    //id: newId,
     ...formData,
     status: "active",
-    wageDetails: generateDefaultWage().map((item, idx) => ({
-      ...item,
-      id: Date.now() + idx,
-    })),
   };
   emit("add", newEmployee);
   dialogVisible.value = false;

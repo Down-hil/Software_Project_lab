@@ -55,9 +55,15 @@
         实发金额: <strong>¥{{ netSalary }}</strong>
       </div>
     </div>
-    <div class="wage-note">
-      注：自定义工资项后自动保存，员工可在此查看个人工资条
+
+    <!-- 新增手动保存按钮 -->
+    <div style="text-align: right; margin-top: 12px">
+      <el-button type="primary" size="small" @click="saveWageChanges">
+        保存工资修改
+      </el-button>
     </div>
+
+    <div class="wage-note">注：修改工资项后请点击“保存工资修改”以生效</div>
   </div>
 </template>
 
@@ -73,30 +79,33 @@ const props = defineProps({
 
 const emit = defineEmits(["update:employee"]);
 
-// 本地工资明细，避免直接修改 prop
-const localWageDetails = ref([...props.employee.wageDetails]);
+// 获取工资明细，兼容 snake_case 和 camelCase
+const getWageDetails = (emp) => {
+  return emp.wageDetails || emp.wage_details || [];
+};
 
-// 监听本地工资明细的变化，同步到父组件
-watch(
-  localWageDetails,
-  (newDetails) => {
-    const updatedEmployee = {
-      ...props.employee,
-      wageDetails: newDetails,
-    };
-    emit("update:employee", updatedEmployee);
-  },
-  { deep: true }
-);
+// 本地工资明细，避免直接修改 prop
+const localWageDetails = ref([...getWageDetails(props.employee)]);
 
 // 当外部 employee 变化时，同步本地明细
 watch(
   () => props.employee,
   (newEmployee) => {
-    localWageDetails.value = [...newEmployee.wageDetails];
+    if (newEmployee) {
+      localWageDetails.value = [...getWageDetails(newEmployee)];
+    }
   },
   { deep: true }
 );
+
+// 手动保存工资修改
+const saveWageChanges = () => {
+  const updatedEmployee = {
+    ...props.employee,
+    wageDetails: localWageDetails.value,
+  };
+  emit("update:employee", updatedEmployee);
+};
 
 // 添加新工资项
 const addWageItem = () => {

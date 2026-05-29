@@ -2,6 +2,10 @@
 node_modules
 /dist
 
+# Python
+__pycache__/
+venv/
+*.db
 
 # local env files
 .env.local
